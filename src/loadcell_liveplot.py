@@ -14,7 +14,7 @@ import sys
 def main():
 
     # change to your COM port
-    COM_PORT = 'COM3'
+    COM_PORT = 'COM3'# COM port for Yuchan's
     TRAILING_POINTS = 100
     MIN_MESSAGE_BYTES = 16
 
@@ -69,6 +69,7 @@ def main():
 
                 xs.append(x)
                 ys.append(y)
+
             except Exception as e:
                 print(e)
                 continue

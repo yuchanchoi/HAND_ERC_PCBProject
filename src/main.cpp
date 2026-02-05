@@ -6,7 +6,7 @@ Adafruit_NAU7802 nau;
 
 // ---------------- CONFIG ----------------
 const uint32_t SAMPLE_RATE_HZ = 320; // Fastest NAU7802 sample rate
-const uint32_t TOTAL_DURATION_S = 20; // seconds
+const uint32_t TOTAL_DURATION_S = 30; // seconds
 const uint32_t TOTAL_DURATION_MS = TOTAL_DURATION_S * 1000UL; // milliseconds
 const uint32_t TOTAL_SAMPLES = SAMPLE_RATE_HZ * TOTAL_DURATION_S; // total samples collected
 
