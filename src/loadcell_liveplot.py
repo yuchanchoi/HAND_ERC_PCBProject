@@ -4,20 +4,21 @@ Make sure to set COM_PORT to the correct value before running.
 """
 
 # Changed to reflect main.cpp for live reading of ADC raw values of load cell
-
 import serial
 from rendering import PointsInSpace
 import time
 import csv
 import sys
 
-def main():
 
+def main():
+    
     # change to your COM port
-    COM_PORT = 'COM3'# COM port for Yuchan's
+    COM_PORT = 'COM3'# COM port for Yuchan's computer
     TRAILING_POINTS = 100
     MIN_MESSAGE_BYTES = 16
 
+    
     ser = serial.Serial(
         port=COM_PORT,
         baudrate=115200,
@@ -25,19 +26,24 @@ def main():
         stopbits=serial.STOPBITS_ONE,
         bytesize=serial.EIGHTBITS,
         timeout=0.5,
-)
-
+        )   
+   
+    csv_file = open("data.csv", "w", newline="")
+    writer = csv.writer(csv_file)
+    # writer.writerow(["time", "raw"]) # <<< OLD: write raw value to csv
+    writer.writerow(["time", "modified"]) # <<< NEW: write modified weight to csv instead of raw value
     print("Connected to: " + ser.portstr)
 
     xs = []
     ys = []
 
+    
     live_plotter = PointsInSpace(
                     "Raw Data vs. Time",
                     "Time (s)",
-                    "Value (?)",
-                    xlim=[0, 55],
-                    ylim=[-1e6, 1e6],
+                    "Value (g)",
+                    xlim=[0, 30],
+                    ylim=[-1e4, 1e4],
                     enable_grid=True,
                     enable_legend=True,
                 )
@@ -62,13 +68,18 @@ def main():
                     return res
 
                 x = value_by_label("time")
-                y = value_by_label("raw")
+                #y = value_by_label("raw") # <<< OLD: read raw value
+                y = value_by_label("modified_weight")  # <<< NEW: read modified weight instead of raw value
 
                 print("time: ", x)
-                print("raw: ", y)
+                #print("raw: ", y) <<< OLD: print raw value
+                print("modified_weight: ", y)  #<< NEW: print modified weight instead of raw value
 
                 xs.append(x)
                 ys.append(y)
+
+                writer.writerow([x, y])
+                csv_file.flush()
 
             except Exception as e:
                 print(e)
@@ -85,6 +96,7 @@ def main():
         except Exception as e:
             print(e)
             ser.close()
+            csv_file.close()
             print("Closed connection")
             quit()
 
