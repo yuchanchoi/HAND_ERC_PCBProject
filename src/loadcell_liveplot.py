@@ -42,7 +42,7 @@ def main():
                     "Raw Data vs. Time",
                     "Time (s)",
                     "Value (g)",
-                    xlim=[0, 30],
+                    xlim=[0, 60],
                     ylim=[-1e4, 1e4],
                     enable_grid=True,
                     enable_legend=True,

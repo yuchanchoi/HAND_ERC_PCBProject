@@ -5,7 +5,7 @@
 Adafruit_NAU7802 nau;
 
 // ---------------- USER-DEFINED CONSTANTS ----------------
-uint32_t USER_DURATION_S = 30;        // seconds (set once in setup)
+uint32_t USER_DURATION_S = 60;        // seconds (set once in setup)
 float    USER_CAL_WEIGHT = 0.0f;     // known calibration weight (units in gram)
 
 // ---------------- CONFIG ----------------
@@ -27,18 +27,54 @@ uint32_t runStart = 0;
 bool finished = false;
 
 // ---------------- CALIBRATION MATH ---------------- (y = mx + b) to convert raw NAU7802 counts to grams
-float strain_offset = 408339.468750; // NEEDS TO CHANGE BASED ON YOUR LOAD CELL AND CALIBRATION WEIGHT! (units in raw NAU7802 counts)
-float strain_slope_pos = 209.2992;// NEEDS TO CHANGE BASED ON YOUR LOAD CELL AND CALIBRATION WEIGHT! (units in raw NAU7802 counts per gram)
-float strain_slope_neg = 209.1; // NEEDS TO CHANGE BASED ON YOUR LOAD CELL AND CALIBRATION WEIGHT! (units in raw NAU7802 counts per gram)
+float strain_offset = 415043.1887; // NEEDS TO CHANGE BASED ON YOUR LOAD CELL AND CALIBRATION WEIGHT! (units in raw NAU7802 counts)
+float strain_slope_pos = 208.5548782;// NEEDS TO CHANGE BASED ON YOUR LOAD CELL AND CALIBRATION WEIGHT! (units in raw NAU7802 counts per gram)
+float strain_slope_neg = 209.9025549; // NEEDS TO CHANGE BASED ON YOUR LOAD CELL AND CALIBRATION WEIGHT! (units in raw NAU7802 counts per gram)
 uint32_t n = 0; // number of samples collected (for calibration math)
-float total = 0;
+float rtotal = 0;
+uint32_t m = 0; // number of modified weight samples collected (for calibration math)
+float mtotal = 0; // total modified weight (for calibration math)
 
 
-// <<< NEW: helper to wait for a line of input (non-deadlocking)
-static void waitForUserInputLine() {   // <<< NEW
-  while (!Serial.available()) {        // <<< NEW
-    delay(10);                         // <<< NEW (yields time to USB/Serial)
+// helper to wait for a line of input (non-deadlocking)
+static void waitForUserInputLine() {   
+  while (!Serial.available()) {        
+    delay(10);                         // yields time to USB/Serial)
   }
+}
+
+// helper to prompt user for duration + cal weight (re-used every run)
+static void promptUserConfig() {                    // <<< NEW
+  Serial.println("Enter duration (seconds): ");     // <<< NEW
+  waitForUserInputLine();                           // <<< NEW
+  USER_DURATION_S = Serial.parseInt();              // <<< NEW
+  Serial.readStringUntil('\n');                     // <<< NEW (clear rest of line)
+
+  if (USER_DURATION_S == 0) USER_DURATION_S = 1;                 // <<< NEW
+  if (USER_DURATION_S > MAX_DURATION_S) USER_DURATION_S = MAX_DURATION_S;
+
+  delay(200);                                      // <<< NEW (small buffer clear delay)
+
+  Serial.println("Enter calibration weight (in grams): ");       // <<< NEW
+  waitForUserInputLine();                           // <<< NEW
+  USER_CAL_WEIGHT = Serial.parseFloat();            // <<< NEW
+  Serial.readStringUntil('\n');                     // <<< NEW (clear rest of line)
+
+  Serial.println("CONFIG RECEIVED");                // <<< NEW
+  Serial.print("Duration (s): ");                   // <<< NEW
+  Serial.println(USER_DURATION_S);                  // <<< NEW
+  Serial.print("Calibration weight: ");             // <<< NEW
+  Serial.println(USER_CAL_WEIGHT);                  // <<< NEW
+}
+
+// helper to ask user if they want to run again
+static bool askRunAgain() {                         // <<< NEW
+  Serial.println("Run again? (y/n): ");             // <<< NEW
+  waitForUserInputLine();                           // <<< NEW
+  String ans = Serial.readStringUntil('\n');        // <<< NEW
+  ans.trim();                                       // <<< NEW
+  ans.toLowerCase();                                // <<< NEW
+  return (ans.startsWith("y"));                     // <<< NEW
 }
 
 // ---------------- SETUP ----------------
@@ -52,6 +88,8 @@ void setup() {
   // IMPORTANT NOTE: The following block of code is meant to be commented out if you want to use the live plot Python script
   //-----------------------------------------------------------------------------------------------------------------------
   // --- Comment out the following if you wanna use live plot
+
+  delay(500); // Small delay to ensure Serial is ready before prompting user
 
   Serial.println("Enter duration (seconds): ");
   waitForUserInputLine(); 
@@ -101,6 +139,27 @@ void setup() {
 // ------------- LOOP ----------------
 void loop() {
 
+  if (finished) {                                   
+    bool again = askRunAgain();                     
+    if (!again) {                                   
+      Serial.println("Stopping. (Reset board to start again)");
+      while (1) { delay(1000); }                    // (idle forever)
+    }
+
+    // user chose to run again -> re-prompt config + reset run state
+    promptUserConfig();                              
+    finished = false;                                
+    started  = false;                                
+    n = 0;      
+    m = 0;                                     
+    rtotal = 0;
+    mtotal = 0;                                       
+
+    Serial.println("[Starting in 1 second...]");     
+    delay(1000);                                     
+    Serial.println("START"); 
+  }                        
+
   if(finished) {
     return;
   }
@@ -116,7 +175,7 @@ void loop() {
     int32_t v = nau.read();
     float modified_weight = 0;
 
-    // ---- THIS LINE FORMAT MATCHES YOUR PYTHON PARSER ----
+    // ---- THIS LINE FORMAT MATCHES PYTHON PARSER ----
     // Must be whitespace-separated tokens: "X:" <num> "Y:" <num>
     Serial.print("time: ");
     Serial.print(t_s, 6);
@@ -125,12 +184,12 @@ void loop() {
     Serial.print(" modified_weight: ");
 
     // modified weight calculator
-    float delta = (float)v - strain_offset;          // <<< CHANGED: use delta from offset (not sign of v)
+    float delta = (float)v - strain_offset;          // use delta from offset (not sign of v)
 
-    if (delta >= 0) {                                // <<< CHANGED: branch on delta sign
-      modified_weight = delta / strain_slope_pos;    // <<< CHANGED: (v - offset)/slope_pos
+    if (delta >= 0) {                                // branch on delta sign
+      modified_weight = delta / strain_slope_pos;    // (v - offset)/slope_pos
     } else {
-      modified_weight = delta / strain_slope_neg;    // <<< CHANGED: still (v - offset), keeps negative values negative
+      modified_weight = delta / strain_slope_neg;    // still (v - offset), keeps negative values negative
     }
 
 
@@ -138,22 +197,42 @@ void loop() {
     Serial.println(modified_weight, 6);  // print as float so Python float() always works
     
     n++;
-    total += v;
+    rtotal += v;
+
+    m++;
+    mtotal += modified_weight;
+    
     
     if(t_s >= (float)USER_DURATION_S) {
       finished = true;
-      float average = total / n;
+
+      // printing test results
+      float average = rtotal / n;
+      Serial.println("\n ----- TEST RESULTS ----- \n");
       Serial.print("Average raw value: ");
       Serial.println(average, 6);
+      float average_modified = mtotal / m;
+      Serial.print("Average modified weight: ");
+      Serial.println(average_modified, 6);
+      Serial.print("% error (modified weight vs cal weight): ");
+      float error_percent = 100.0f * fabs(average_modified - USER_CAL_WEIGHT) / USER_CAL_WEIGHT;
+      Serial.println(error_percent, 2);
+      Serial.println("\n ----- CALIBRATION INFO ----- \n");
 
+      // printing test parameters info for reference
       Serial.print("Calibration weight (g): ");
       Serial.println(USER_CAL_WEIGHT, 6);
+      Serial.print("Calculated strain offset: ");
+      Serial.println(strain_offset, 6);
+      Serial.print("Calculated strain slope (pos): ");
+      Serial.println(strain_slope_pos, 6);
+      Serial.print("Calculated strain slope (neg): ");
+      Serial.println(strain_slope_neg, 6);
 
       // Serial.print("Predicted weight (g): ");
       // float predicted_weight = (average - strain_offset) / strain_slope; // <<< NEW: apply calibration math
       // Serial.println(predicted_weight, 6);
-      Serial.println("DONE");
+      Serial.println("\nTest Done \n");
     }
   }
-
 }
