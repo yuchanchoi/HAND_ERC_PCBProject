@@ -15,6 +15,12 @@ const uint32_t TOTAL_DURATION_MS = TOTAL_DURATION_S * 1000UL; // milliseconds
 const uint32_t TOTAL_SAMPLES = SAMPLE_RATE_HZ * TOTAL_DURATION_S; // total samples collected
 const uint32_t MAX_DURATION_S = 60; // Maximum allowed duration (seconds)
 
+// ---------------- NEW: dynamic offset from first 80 readings (1/4 seconds) ----------------
+const uint16_t OFFSET_CAL_SAMPLES = 80;      // NEW
+uint16_t offsetCount = 0;                   // NEW
+int64_t  offsetSum = 0;                     // NEW (int64_t avoids overflow)
+bool     offsetLocked = false;              // NEW
+
 // ---------------- STORAGE ----------------
 uint32_t time_ms[TOTAL_SAMPLES];
 int32_t  raw[TOTAL_SAMPLES];
@@ -32,7 +38,6 @@ float strain_slope_pos = 208.5548782;// NEEDS TO CHANGE BASED ON YOUR LOAD CELL 
 float strain_slope_neg = 209.6062518; // NEEDS TO CHANGE BASED ON YOUR LOAD CELL AND CALIBRATION WEIGHT! (units in raw NAU7802 counts per gram)
 uint32_t n = 0; // number of samples collected (for calibration math)
 float rtotal = 0;
-uint32_t m = 0; // number of modified weight samples collected (for calibration math)
 float mtotal = 0; // total modified weight (for calibration math)
 
 
@@ -128,7 +133,7 @@ void setup() {
   // Setting NAU7802 parameters
   nau.setGain(NAU7802_GAIN_128);
   nau.setRate(NAU7802_RATE_320SPS);
-  nau.calibrate(NAU7802_CALMOD_INTERNAL);
+  //nau.calibrate(NAU7802_CALMOD_INTERNAL);
 
   Serial.println("READY");
   Serial.println("[Starting in 1 second...]");
@@ -152,10 +157,14 @@ void loop() {
     promptUserConfig();                              
     finished = false;                                
     started  = false;                                
-    n = 0;      
-    m = 0;                                     
+    n = 0;                                        
     rtotal = 0;
-    mtotal = 0;                                       
+    mtotal = 0;
+    
+    // ---------------- NEW: reset dynamic offset accumulator for the new run ----------------
+    offsetCount = 0;          // NEW
+    offsetSum = 0;            // NEW
+    offsetLocked = false;     // NEW
 
     Serial.println("[Starting in 1 second...]");     
     delay(1000);                                     
@@ -176,6 +185,17 @@ void loop() {
     float t_s = t_ms / 1000.0f;              // seconds for nicer plotting
     int32_t v = nau.read();
     float modified_weight = 0;
+
+
+    // ---------------- NEW: build dynamic offset from first 50 readings ----------------
+    if (!offsetLocked) {                              // NEW
+      offsetSum += (int64_t)v;                        // NEW
+      offsetCount++;                                  // NEW
+      if (offsetCount >= OFFSET_CAL_SAMPLES) {        // NEW
+        strain_offset = (float)(offsetSum / (int64_t)OFFSET_CAL_SAMPLES); // NEW
+        offsetLocked = true;                          // NEW
+      }
+    }
 
     // ---- THIS LINE FORMAT MATCHES PYTHON PARSER ----
     // Must be whitespace-separated tokens: "X:" <num> "Y:" <num>
@@ -198,8 +218,6 @@ void loop() {
     
     n++;
     rtotal += v;
-
-    m++;
     mtotal += modified_weight;
     
     
@@ -211,7 +229,7 @@ void loop() {
       Serial.println("\n ----- TEST RESULTS ----- \n");
       Serial.print("Average raw value: ");
       Serial.println(average, 6);
-      float average_modified = mtotal / m;
+      float average_modified = mtotal / n;
       Serial.print("Average modified weight: ");
       Serial.println(average_modified, 6);
       Serial.print("% error (modified weight vs cal weight): ");
