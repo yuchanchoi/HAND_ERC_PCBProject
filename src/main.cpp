@@ -29,7 +29,7 @@ bool finished = false;
 // ---------------- CALIBRATION MATH ---------------- (y = mx + b) to convert raw NAU7802 counts to grams
 float strain_offset = 415043.1887; // NEEDS TO CHANGE BASED ON YOUR LOAD CELL AND CALIBRATION WEIGHT! (units in raw NAU7802 counts)
 float strain_slope_pos = 208.5548782;// NEEDS TO CHANGE BASED ON YOUR LOAD CELL AND CALIBRATION WEIGHT! (units in raw NAU7802 counts per gram)
-float strain_slope_neg = 209.9025549; // NEEDS TO CHANGE BASED ON YOUR LOAD CELL AND CALIBRATION WEIGHT! (units in raw NAU7802 counts per gram)
+float strain_slope_neg = 209.6062518; // NEEDS TO CHANGE BASED ON YOUR LOAD CELL AND CALIBRATION WEIGHT! (units in raw NAU7802 counts per gram)
 uint32_t n = 0; // number of samples collected (for calibration math)
 float rtotal = 0;
 uint32_t m = 0; // number of modified weight samples collected (for calibration math)
@@ -44,37 +44,37 @@ static void waitForUserInputLine() {
 }
 
 // helper to prompt user for duration + cal weight (re-used every run)
-static void promptUserConfig() {                    // <<< NEW
-  Serial.println("Enter duration (seconds): ");     // <<< NEW
-  waitForUserInputLine();                           // <<< NEW
-  USER_DURATION_S = Serial.parseInt();              // <<< NEW
-  Serial.readStringUntil('\n');                     // <<< NEW (clear rest of line)
+static void promptUserConfig() {                    
+  Serial.println("Enter duration (seconds): ");     
+  waitForUserInputLine();                           
+  USER_DURATION_S = Serial.parseInt();              
+  Serial.readStringUntil('\n');                     // (clear rest of line)
 
-  if (USER_DURATION_S == 0) USER_DURATION_S = 1;                 // <<< NEW
+  if (USER_DURATION_S == 0) USER_DURATION_S = 1; 
   if (USER_DURATION_S > MAX_DURATION_S) USER_DURATION_S = MAX_DURATION_S;
 
-  delay(200);                                      // <<< NEW (small buffer clear delay)
+  delay(200);                                      // (small buffer clear delay)
 
-  Serial.println("Enter calibration weight (in grams): ");       // <<< NEW
-  waitForUserInputLine();                           // <<< NEW
-  USER_CAL_WEIGHT = Serial.parseFloat();            // <<< NEW
-  Serial.readStringUntil('\n');                     // <<< NEW (clear rest of line)
+  Serial.println("Enter calibration weight (in grams): ");
+  waitForUserInputLine();                           
+  USER_CAL_WEIGHT = Serial.parseFloat();            
+  Serial.readStringUntil('\n');                     // (clear rest of line)
 
-  Serial.println("CONFIG RECEIVED");                // <<< NEW
-  Serial.print("Duration (s): ");                   // <<< NEW
-  Serial.println(USER_DURATION_S);                  // <<< NEW
-  Serial.print("Calibration weight: ");             // <<< NEW
-  Serial.println(USER_CAL_WEIGHT);                  // <<< NEW
+  Serial.println("CONFIG RECEIVED");                
+  Serial.print("Duration (s): ");                   
+  Serial.println(USER_DURATION_S);                  
+  Serial.print("Calibration weight: ");             
+  Serial.println(USER_CAL_WEIGHT);                  
 }
 
 // helper to ask user if they want to run again
-static bool askRunAgain() {                         // <<< NEW
-  Serial.println("Run again? (y/n): ");             // <<< NEW
-  waitForUserInputLine();                           // <<< NEW
-  String ans = Serial.readStringUntil('\n');        // <<< NEW
-  ans.trim();                                       // <<< NEW
-  ans.toLowerCase();                                // <<< NEW
-  return (ans.startsWith("y"));                     // <<< NEW
+static bool askRunAgain() {                         
+  Serial.println("Run again? (y/n): ");             
+  waitForUserInputLine();                           
+  String ans = Serial.readStringUntil('\n');        
+  ans.trim();                                       
+  ans.toLowerCase();                                
+  return (ans.startsWith("y"));                     
 }
 
 // ---------------- SETUP ----------------
@@ -97,7 +97,7 @@ void setup() {
   Serial.readStringUntil('\n'); // Clear the rest of the line
 
 
-  if (USER_DURATION_S == 0) USER_DURATION_S = 1;                 // <<< NEW
+  if (USER_DURATION_S == 0) USER_DURATION_S = 1;
   if (USER_DURATION_S > MAX_DURATION_S) USER_DURATION_S = MAX_DURATION_S;
 
   delay(500); // Small delay to ensure Serial buffer is clear before next prompt
@@ -143,7 +143,9 @@ void loop() {
     bool again = askRunAgain();                     
     if (!again) {                                   
       Serial.println("Stopping. (Reset board to start again)");
-      while (1) { delay(1000); }                    // (idle forever)
+      while (1) {        // (idle forever)
+        delay(1000); 
+      }
     }
 
     // user chose to run again -> re-prompt config + reset run state
@@ -192,8 +194,6 @@ void loop() {
       modified_weight = delta / strain_slope_neg;    // still (v - offset), keeps negative values negative
     }
 
-
-    
     Serial.println(modified_weight, 6);  // print as float so Python float() always works
     
     n++;
@@ -215,7 +215,7 @@ void loop() {
       Serial.print("Average modified weight: ");
       Serial.println(average_modified, 6);
       Serial.print("% error (modified weight vs cal weight): ");
-      float error_percent = 100.0f * fabs(average_modified - USER_CAL_WEIGHT) / USER_CAL_WEIGHT;
+      float error_percent = 100.0f * (fabs(average_modified) - fabs(USER_CAL_WEIGHT)) / USER_CAL_WEIGHT;
       Serial.println(error_percent, 2);
       Serial.println("\n ----- CALIBRATION INFO ----- \n");
 
