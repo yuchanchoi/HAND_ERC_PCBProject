@@ -10,16 +10,16 @@ float    USER_CAL_WEIGHT = 0.0f;     // known calibration weight (units in gram)
 
 // ---------------- CONFIG ----------------
 const uint32_t SAMPLE_RATE_HZ = 320; // Fastest NAU7802 sample rate
-const uint32_t TOTAL_DURATION_S = 40; // seconds
+const uint32_t TOTAL_DURATION_S = 60; // seconds
 const uint32_t TOTAL_DURATION_MS = TOTAL_DURATION_S * 1000UL; // milliseconds
 const uint32_t TOTAL_SAMPLES = SAMPLE_RATE_HZ * TOTAL_DURATION_S; // total samples collected
 const uint32_t MAX_DURATION_S = 60; // Maximum allowed duration (seconds)
 
 // ---------------- NEW: dynamic offset from first 80 readings (1/4 seconds) ----------------
-const uint16_t OFFSET_CAL_SAMPLES = 80;      // NEW
-uint16_t offsetCount = 0;                   // NEW
-int64_t  offsetSum = 0;                     // NEW (int64_t avoids overflow)
-bool     offsetLocked = false;              // NEW
+const uint16_t OFFSET_CAL_SAMPLES = 80;      // Number of initial samples to use for dynamic offset calibration (at 320 SPS, 80 samples = 0.25 seconds)
+uint16_t offsetCount = 0;                   // Count of samples included in offset sum, up to OFFSET_CAL_SAMPLES
+int64_t  offsetSum = 0;                     // Accumulator for sum of raw values used to calculate dynamic offset (use int64_t to avoid overflow) (units in raw NAU7802 counts)
+bool     offsetLocked = false;              // Flag to indicate when dynamic offset is locked in and ready to use
 
 // ---------------- STORAGE ----------------
 uint32_t time_ms[TOTAL_SAMPLES];
@@ -94,30 +94,30 @@ void setup() {
   //-----------------------------------------------------------------------------------------------------------------------
   // --- Comment out the following if you wanna use live plot
 
-  delay(500); // Small delay to ensure Serial is ready before prompting user
+  // delay(500); // Small delay to ensure Serial is ready before prompting user
 
-  Serial.println("Enter duration (seconds): ");
-  waitForUserInputLine(); 
-  USER_DURATION_S = Serial.parseInt();
-  Serial.readStringUntil('\n'); // Clear the rest of the line
+  // Serial.println("Enter duration (seconds): ");
+  // waitForUserInputLine(); 
+  // USER_DURATION_S = Serial.parseInt();
+  // Serial.readStringUntil('\n'); // Clear the rest of the line
 
 
-  if (USER_DURATION_S == 0) USER_DURATION_S = 1;
-  if (USER_DURATION_S > MAX_DURATION_S) USER_DURATION_S = MAX_DURATION_S;
+  // if (USER_DURATION_S == 0) USER_DURATION_S = 1;
+  // if (USER_DURATION_S > MAX_DURATION_S) USER_DURATION_S = MAX_DURATION_S;
 
-  delay(500); // Small delay to ensure Serial buffer is clear before next prompt
+  // delay(500); // Small delay to ensure Serial buffer is clear before next prompt
   
   
-  Serial.println("Enter calibration weight (in grams): ");
-  waitForUserInputLine();
-  USER_CAL_WEIGHT = Serial.parseFloat();
-  Serial.readStringUntil('\n'); // Clear the rest of the line
+  // Serial.println("Enter calibration weight (in grams): ");
+  // waitForUserInputLine();
+  // USER_CAL_WEIGHT = Serial.parseFloat();
+  // Serial.readStringUntil('\n'); // Clear the rest of the line
 
-  Serial.println("CONFIG RECEIVED");
-  Serial.print("Duration (s): ");
-  Serial.println(USER_DURATION_S);
-  Serial.print("Calibration weight: ");
-  Serial.println(USER_CAL_WEIGHT);
+  // Serial.println("CONFIG RECEIVED");
+  // Serial.print("Duration (s): ");
+  // Serial.println(USER_DURATION_S);
+  // Serial.print("Calibration weight: ");
+  // Serial.println(USER_CAL_WEIGHT);
 
   // End of comment out block for Python live plot (loadcell.liveplot.py)
   //-----------------------------------------------------------------------------------------------------------------------
@@ -246,10 +246,7 @@ void loop() {
       Serial.println(strain_slope_pos, 6);
       Serial.print("Calculated strain slope (neg): ");
       Serial.println(strain_slope_neg, 6);
-
-      // Serial.print("Predicted weight (g): ");
-      // float predicted_weight = (average - strain_offset) / strain_slope; // <<< NEW: apply calibration math
-      // Serial.println(predicted_weight, 6);
+      
       Serial.println("\nTest Done \n");
     }
   }
