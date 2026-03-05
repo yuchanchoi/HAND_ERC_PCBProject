@@ -741,7 +741,7 @@
 	(footprint "Diode_SMD:D_SMA"
 		(layer "F.Cu")
 		(uuid "63cb0453-883f-42d2-9171-240cce3b1a70")
-		(at 124.46 112.49 90)
+		(at 119.38 115.03 90)
 		(descr "Diode SMA (DO-214AC)")
 		(tags "Diode SMA (DO-214AC)")
 		(property "Reference" "D2"
@@ -2643,6 +2643,28 @@
 				(xyz 0 0 0)
 			)
 		)
+	)
+	(gr_circle
+		(center 110.49 148.59)
+		(end 110.49 149.86)
+		(stroke
+			(width 0.2)
+			(type default)
+		)
+		(fill no)
+		(layer "F.Cu")
+		(uuid "6f5ff305-ae01-46a8-ae4b-920cb703ddd7")
+	)
+	(gr_rect
+		(start 107.95 97.79)
+		(end 138.43 135.89)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(fill no)
+		(layer "Edge.Cuts")
+		(uuid "c96e7123-20ae-4ee5-a943-5cbc0b15c4c3")
 	)
 	(embedded_fonts no)
 )
