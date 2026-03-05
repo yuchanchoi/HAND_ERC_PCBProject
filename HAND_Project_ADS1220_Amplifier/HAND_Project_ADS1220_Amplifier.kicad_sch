@@ -2117,6 +2117,77 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:Conn_01x03_Pin")
+		(at 210.82 92.71 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "17a822a0-2ea2-4d18-8d48-769382d2365f")
+		(property "Reference" "J4"
+			(at 211.455 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x03_Pin"
+			(at 211.455 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector:FanPinHeader_1x03_P2.54mm_Vertical"
+			(at 210.82 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 210.82 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x03, script generated"
+			(at 210.82 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "3"
+			(uuid "5bc25076-67de-44df-b5e7-6e60ab400d0c")
+		)
+		(pin "1"
+			(uuid "dd57f2e3-90d0-4dc5-80eb-e018f724fc74")
+		)
+		(pin "2"
+			(uuid "f818fcb2-9857-4b8b-83cb-9ddeeaf69db8")
+		)
+		(instances
+			(project ""
+				(path "/f939b9ff-c66a-4ae1-bae0-ab02f1d8a589"
+					(reference "J4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 181.61 114.3 0)
 		(unit 1)
