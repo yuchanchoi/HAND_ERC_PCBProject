@@ -407,6 +407,169 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Connector:Conn_01x02_Pin"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 0 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x02_Pin"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x02, script generated"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_locked" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Conn_01x02_Pin_1_1"
+				(rectangle
+					(start 0.8636 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start 0.8636 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 0) (xy 0.8636 0)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -2.54) (xy 0.8636 -2.54)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at 5.08 0 180)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 -2.54 180)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Connector:Conn_01x04_Pin"
 			(pin_names
 				(offset 1.016)
@@ -2106,6 +2269,18 @@
 		(uuid 8ede80b4-860b-49dc-9808-6046b378808e)
 	)
 	(rectangle
+		(start 201.93 114.3)
+		(end 241.3 135.89)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 91cea571-bb6c-4521-af31-49ebedbefd51)
+	)
+	(rectangle
 		(start 54.61 25.4)
 		(end 100.33 82.55)
 		(stroke
@@ -2158,6 +2333,16 @@
 			)
 		)
 		(uuid "483c1112-a355-41a7-8955-292711b7d3eb")
+	)
+	(text "External Power Supply\n"
+		(exclude_from_sim no)
+		(at 212.344 113.03 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "4e2411d8-bba8-4590-a37d-7212edb91524")
 	)
 	(text "Analog Filter for 2kHz sampling rate\n(Cutoff Freq. of 1kHz)"
 		(exclude_from_sim no)
@@ -2443,6 +2628,16 @@
 	)
 	(wire
 		(pts
+			(xy 214.63 125.73) (xy 214.63 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "58cad874-0fdf-435c-913a-fec92053e469")
+	)
+	(wire
+		(pts
 			(xy 45.72 144.78) (xy 45.72 149.86)
 		)
 		(stroke
@@ -2450,6 +2645,16 @@
 			(type default)
 		)
 		(uuid "63dc91c9-9b7a-46be-b9ba-53d3042b4d85")
+	)
+	(wire
+		(pts
+			(xy 209.55 120.65) (xy 209.55 125.73)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6564fabc-2b56-4140-b649-afa6ea8a7484")
 	)
 	(wire
 		(pts
@@ -2773,6 +2978,16 @@
 	)
 	(wire
 		(pts
+			(xy 214.63 123.19) (xy 217.17 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "da7a4a80-502a-4528-bcb8-a09247b7b7bb")
+	)
+	(wire
+		(pts
 			(xy 58.42 62.23) (xy 62.23 62.23)
 		)
 		(stroke
@@ -2810,6 +3025,16 @@
 			(type default)
 		)
 		(uuid "e8d83f6c-7abd-4dd2-87ee-67a2b54f8c86")
+	)
+	(wire
+		(pts
+			(xy 217.17 120.65) (xy 209.55 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eb259987-1498-44a6-806a-67195b49da30")
 	)
 	(wire
 		(pts
@@ -3328,6 +3553,71 @@
 			(project ""
 				(path "/f939b9ff-c66a-4ae1-bae0-ab02f1d8a589"
 					(reference "J7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 209.55 125.73 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3618ad0b-7771-4918-b3df-23bcb51c53b9")
+		(property "Reference" "#PWR016"
+			(at 209.55 132.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 209.55 130.048 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 209.55 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 209.55 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 209.55 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8df33a51-7550-4ab1-bb44-4c2aaa53e074")
+		)
+		(instances
+			(project "HAND_Project_ADS1220_Amplifier"
+				(path "/f939b9ff-c66a-4ae1-bae0-ab02f1d8a589"
+					(reference "#PWR016")
 					(unit 1)
 				)
 			)
@@ -4781,6 +5071,76 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 222.25 123.19 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "da3f908c-754a-4253-a281-7dcd71f96f98")
+		(property "Reference" "J3"
+			(at 223.52 120.6499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "Conn_01x02_Pin"
+			(at 223.52 123.1899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical"
+			(at 222.25 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 222.25 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 222.25 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "506cd6be-ae8c-4a7d-b28c-b5caf32021d3")
+		)
+		(pin "2"
+			(uuid "7426067e-c789-42c8-b385-ef0ea2e9e2b9")
+		)
+		(instances
+			(project ""
+				(path "/f939b9ff-c66a-4ae1-bae0-ab02f1d8a589"
+					(reference "J3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 87.63 110.49 0)
 		(unit 1)
@@ -4907,6 +5267,71 @@
 			(project ""
 				(path "/f939b9ff-c66a-4ae1-bae0-ab02f1d8a589"
 					(reference "#PWR06")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VCC")
+		(at 214.63 125.73 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e5544d34-7071-4604-b9a1-d766139099a3")
+		(property "Reference" "#PWR015"
+			(at 214.63 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "5V"
+			(at 214.63 129.794 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 214.63 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 214.63 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VCC\""
+			(at 214.63 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "be654269-34d3-4003-a395-5e926f6ba49f")
+		)
+		(instances
+			(project "HAND_Project_ADS1220_Amplifier"
+				(path "/f939b9ff-c66a-4ae1-bae0-ab02f1d8a589"
+					(reference "#PWR015")
 					(unit 1)
 				)
 			)
