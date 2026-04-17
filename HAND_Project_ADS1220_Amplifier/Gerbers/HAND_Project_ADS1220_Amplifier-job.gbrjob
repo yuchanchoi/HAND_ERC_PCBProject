@@ -5,17 +5,17 @@
       "Application": "Pcbnew",
       "Version": "9.0.7"
     },
-    "CreationDate": "2026-04-16T11:45:54-05:00"
+    "CreationDate": "2026-04-16T19:52:42-05:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
       "Name": "HAND_Project_ADS1220_Amplifier",
       "GUID": "48414e44-5f50-4726-9f6a-6563745f4144",
-      "Revision": "rev?"
+      "Revision": "v01"
     },
     "Size": {
       "X": 30.53,
-      "Y": 38.15
+      "Y": 33.07
     },
     "LayerNumber": 2,
     "BoardThickness": 1.6,
