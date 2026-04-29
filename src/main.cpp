@@ -24,26 +24,24 @@ void setup() {
     adc.begin();
     adc.reset();
 
-
     Serial.println("ADS1220 reset done");
 
-    // Config Register 0: AIN0/AIN1 differential, gain=128
-    adc.writeRegister(0x00, 0x01); // OLD: wrong - this sets gain=1 and bypasses PGA
-    // adc.writeRegister(0x00, 0x0E);    // 0b00001110: MUX=AIN0/AIN1, GAIN=128, PGA enabled
-    // Config Register 1: continuous mode, 20 SPS
-    adc.writeRegister(0x01, 0x04);
+    adc.writeRegister(0x00, 0x6E);
+    adc.writeRegister(0x01, 0xD4);
 
 
     Serial.println("Registers written");
-    Serial.print("Reg0 readback (should be 01): 0x");
+    Serial.print("Reg0 readback (should be 6E): 0x");
     Serial.println(adc.readRegister(0x00), HEX);
+    Serial.print("Reg1 readback (should be D4): 0x");
+    Serial.println(adc.readRegister(0x01), HEX);
 
     adc.startConversion();
 
 
     Serial.println("Conversion started, waiting for DRDY...");
 
-    // Zero the offset with 100 samples
+    // Zero the offset with 100 samples --> sets the initial position as zero.
     adc.findADCOffset(100);
 
 
@@ -52,14 +50,193 @@ void setup() {
 }
 
 void loop() {
-    // Wait for DRDY to go LOW (conversion ready)
+
+    //    Wait for DRDY to go LOW (conversion ready)
     while (digitalRead(DRDY_PIN)) {}
 
-    // float value = adc.readDataCalibrated(LOAD_CELL_CAL);
-    // Serial.println(value);
-    int32_t raw = adc.readData();
-    Serial.println(raw);
+    // Calibrated Values (?) not sure what they are calibrated to.
+    float value = adc.readDataCalibrated(LOAD_CELL_CAL);
+    Serial.println(value);
+
+    // Raw Values
+    // int32_t raw = adc.readData();
+    // Serial.println(raw);
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// #include <Arduino.h>
+// #include <SPI.h>
+
+ 
+// #define SPI_BAUDRATE 4096000/4
+// #define SERIAL_BAUDRATE 115200
+ 
+// #define CS_PIN 10 // LC0
+// #define DRDY_PIN 9  //LC0
+ 
+// //#define CS_PIN 8 // LC1
+// //#define DRDY_PIN 7  //LC1
+ 
+// #define RDATA 0x10
+ 
+// #define LC_CAL 0.0000165527f // Load cell callibration factor (N/tick)
+ 
+// // Global vars
+// int32_t lc_offset = 0;
+// uint8_t ch0_drdy = 0;
+ 
+// // Function prototypes for reading and writing to the ADC
+// int32_t readADC();
+// void printADCData();
+// void writeADCData(uint8_t* write_bufer);
+// int32_t findADCOffset();
+ 
+// volatile long readingSum = 0;
+// volatile int samples = 0;
+ 
+// IntervalTimer adc_read;
+ 
+// void setup() {
+//   // Create PWM to act as a clock for the ADS1220
+//   pinMode(6, OUTPUT);
+//   //digitalWrite(6, LOW);
+//   analogWriteFrequency(6, 4096000);
+//   analogWrite(6, 127);
+ 
+//   // Initialize SPI
+//   SPI.begin();
+//   pinMode(CS_PIN, OUTPUT);
+//   digitalWrite(CS_PIN, HIGH);
+//   SPI.beginTransaction(SPISettings(SPI_BAUDRATE, MSBFIRST, SPI_MODE1));
+ 
+//   // Initialize Serial and wait till connection is made
+//   Serial.begin(SERIAL_BAUDRATE);
+//   while (!Serial) {
+//     delay(10);
+//   }
+//   Serial.println("Connected");
+ 
+//   // Format the ADC configuration data
+ 
+//   /*
+//      Channel 1
+//   */
+//   //uint8_t config_msg[] = {0b01000001, 0b01101110, 0b11000100};//1000 sps
+//   //uint8_t config_msg[] = {0b01000001, 0b01101110, 0b00000100};  //20sps
+//   //uint8_t config_msg[] = {0b01000001, 0b01100001, 0b00000100};  //20sps and gain 1
+ 
+//   /*
+//      Channel 2
+//   */
+//   uint8_t config_msg[] = {0b01000001, 0b01011110, 0b00000100};  //20sps
+//   //uint8_t config_msg[] = {0b01000001, 0b01011110, 0b11000100};//1000 sps
+ 
+//   uint8_t sync_byte = 0b00001000;
+ 
+//   // Write the configuration to the ADC
+//   digitalWrite(CS_PIN, LOW);
+//   SPI.transfer(config_msg, 3);
+//   digitalWrite(CS_PIN, HIGH);
+ 
+//   // Read the configuration and print to serial
+ 
+//   // Sync the timer of the ADC and wait a specified time
+//   digitalWrite(CS_PIN, LOW);
+//   SPI.transfer(sync_byte);
+//   delayMicroseconds(200);
+//   digitalWrite(CS_PIN, HIGH);
+ 
+//   // Callibrate the offset of the adc
+//   lc_offset = findADCOffset();
+//   Serial.println(lc_offset);
+//   delay(2000);
+ 
+//   // Start capturing the ADC data via interrupt
+//   attachInterrupt(DRDY_PIN, printADCData, FALLING);
+//   //adc_read.begin(printADCData, 1000);
+ 
+// }
+ 
+// void loop() {
+ 
+ 
+// }
+ 
+ 
+// void printADCData() {
+//   if (!digitalRead(DRDY_PIN)) {
+//     Serial.print("F: ");
+//     //Serial.println((readADC() - lc_offset) * LC_CAL, 10);
+//     Serial.println(readADC() - lc_offset);
+//   }
+// }
+ 
+// int32_t readADC() {
+//   uint8_t b0, b1, b2;
+ 
+//   digitalWrite(CS_PIN, LOW);
+//   SPI.transfer(RDATA);
+//   b0 = SPI.transfer(0x00);
+//   b1 = SPI.transfer(0x00);
+//   b2 = SPI.transfer(0x00);
+//   digitalWrite(CS_PIN, HIGH);
+ 
+//   int32_t adc = (int32_t)b0 << 16 | (int32_t)b1 << 8 | (int32_t)b2;
+ 
+//   // Sign-extend 24-bit to 32-bit
+//   if (adc & 0x800000) {
+//     adc |= 0xFF000000;
+//   }
+ 
+//   return adc;
+// }
+ 
+// int32_t findADCOffset() {
+//   int32_t cal_size = 50;
+//   int32_t cal_sum = 0;
+ 
+//   for (int i = 0; i < cal_size; i++) {
+//     while (digitalRead(DRDY_PIN)) {
+//       delayMicroseconds(1);
+//     }
+//     cal_sum += readADC();
+//   }
+//   return  (int32_t) (1.0f * cal_sum / cal_size);
+// }
+
+
+
+
+
 
 
 

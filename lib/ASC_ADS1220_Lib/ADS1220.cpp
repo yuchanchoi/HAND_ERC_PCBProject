@@ -13,6 +13,7 @@ void ADS1220::begin() {
 
 void ADS1220::reset() {
     spi_command(RESET); // RESET command
+    delay(2); // ADS1220 requires ~1ms after RESET before any SPI command
 }
 
 void ADS1220::writeRegister(uint8_t address, uint8_t value) {
@@ -74,6 +75,8 @@ void ADS1220::findADCOffset(int32_t num_samples) {
     cal_sum += readData();
   }
   _lc_offset = (int32_t) (1.0f * cal_sum / num_samples);
+
+  Serial.println("Finished Find ADCOFFSET ");
 }
 
 
