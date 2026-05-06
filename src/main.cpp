@@ -20,7 +20,6 @@ void setup() {
 
     Serial.println("Initializing ADS1220...");
 
-
     adc.begin();
     adc.reset();
 
@@ -56,7 +55,11 @@ void loop() {
 
     // Calibrated Values (?) not sure what they are calibrated to.
     float value = adc.readDataCalibrated(LOAD_CELL_CAL);
-    Serial.println(value);
+    // Serial.println(value);
+    Serial.print("time: "); // printing values to plot on loadcell_liveplot.py
+    Serial.print(millis() / 1000.0, 3);
+    Serial.print(" modified_weight: ");
+    Serial.println(value, 6);
 
     // Raw Values
     // int32_t raw = adc.readData();

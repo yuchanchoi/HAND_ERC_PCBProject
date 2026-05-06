@@ -27,6 +27,9 @@ def main():
         bytesize=serial.EIGHTBITS,
         timeout=0.5,
         )   
+    
+    time.sleep(2)
+    ser.reset_input_buffer()
    
     csv_file = open("data.csv", "w", newline="")
     writer = csv.writer(csv_file)
@@ -43,7 +46,7 @@ def main():
                     "Time (s)",
                     "Value (g)",
                     xlim=[0, 60],
-                    ylim=[-1e4, 1e4],
+                    ylim=[-100, 100],
                     enable_grid=True,
                     enable_legend=True,
                 )
