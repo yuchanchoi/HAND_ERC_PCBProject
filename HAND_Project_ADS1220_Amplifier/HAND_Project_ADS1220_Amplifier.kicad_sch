@@ -2861,7 +2861,7 @@
 		)
 		(uuid "fd7a390a-91fe-4644-af02-82166f7b728b")
 	)
-	(label "AIN0"
+	(label "AIN3"
 		(at 68.58 139.7 180)
 		(effects
 			(font
@@ -3021,7 +3021,7 @@
 		)
 		(uuid "c8a798de-92a8-43ef-bd0f-3a94fcaa9d84")
 	)
-	(label "AIN3"
+	(label "AIN0"
 		(at 87.63 133.35 180)
 		(effects
 			(font
@@ -3911,7 +3911,7 @@
 				)
 			)
 		)
-		(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-4_1x04_P5.00mm_Horizontal"
+		(property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MPT-0,5-4-2.54_1x04_P2.54mm_Horizontal"
 			(at 25.4 142.24 0)
 			(effects
 				(font
